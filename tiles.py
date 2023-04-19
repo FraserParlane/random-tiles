@@ -1,7 +1,11 @@
 from abc import ABC, abstractmethod
 from lxml import etree, builder
 from typing import List
+from tqdm import tqdm
 import numpy as np
+import shutil
+import os
+
 
 # Initialize some SVG objects
 elements = builder.ElementMaker()
@@ -10,8 +14,23 @@ path = elements.path
 circle = elements.circle
 rect = elements.rect
 
+# Colors to use
+color_list = [
+    '#003f5c',
+    '#2f4b7c',
+    '#665191',
+    '#a05195',
+    '#d45087',
+    '#f95d6a',
+    '#ff7c43',
+    '#ffa600',
+]
+
 
 class Tile(ABC):
+    """
+    Base tile class.
+    """
 
     def __init__(
             self,
@@ -84,14 +103,21 @@ class Tile(ABC):
 
 class HalfCircleTile(Tile):
     def build(self):
+        reflect = np.random.choice([True, False])
         color = self.get_color()
         for y in [0, self.height]:
+            kwargs = {
+                'cx': str(self.width / 2),
+                'cy': str(y),
+            }
+            if reflect:
+                kwargs['cx'], kwargs['cy'] = kwargs['cy'], kwargs['cx']
+
             self.doc.append(
                 circle(
-                    cx=str(self.width / 2),
-                    cy=str(y),
                     r=str(self.height / 2),
                     fill=color,
+                    **kwargs,
                 )
             )
 
@@ -113,8 +139,8 @@ class QuarterCircleTile(Tile):
 
 class InsetCircleTile(Tile):
     def build(self):
-        for r in np.linspace(0, self.width / 2, 3)[1:][::-1]:
-            print(r)
+        n = np.random.choice([1, 2, 2, 2])
+        for r in np.linspace(0, self.width / 2, n+1)[1:][::-1]:
             self.doc.append(
                 circle(
                     cx=str(self.width / 2),
@@ -125,16 +151,39 @@ class InsetCircleTile(Tile):
             )
 
 
+def generate_tiles(
+        tiles: List,
+        n: int = 200,
+        folder: str = 'tiles',
+) -> None:
+    """
+    Generate tiles.
+    :param n: Number of tiles to generate
+    :param tiles: Tile classes to use
+    :param folder: Path to store tiles.
+    :return: None
+    """
+
+    # Make empty folder
+    if os.path.exists(folder):
+        shutil.rmtree(folder)
+    os.mkdir(folder)
+
+    # For each tile
+    for i in tqdm(range(n)):
+
+        # Get a random tile class
+        tile_class = np.random.choice(tiles)
+        t: Tile = tile_class(colors=color_list)
+        t.save(f'{folder}/{str(i).zfill(3)}.svg')
+
+
 if __name__ == '__main__':
-    color_list = [
-        '#003f5c',
-        '#2f4b7c',
-        '#665191',
-        '#a05195',
-        '#d45087',
-        '#f95d6a',
-        '#ff7c43',
-        '#ffa600',
-    ]
-    tile = InsetCircleTile(colors=color_list)
-    tile.save(filepath='test.svg')
+
+    generate_tiles(
+        tiles=[
+            HalfCircleTile,
+            QuarterCircleTile,
+            InsetCircleTile,
+        ]
+    )
