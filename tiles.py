@@ -195,9 +195,25 @@ class InsetCircleTile(Tile):
 class GenericHalfCircleTile(Tile):
     def build(self):
 
-        pos = np.random.choice([(0, 2), (1, 3)])
-        reflect = np.random.choice()
+        # Randomly determine position, reflections
+        pos_opt = [(0, 2), (1, 3)]
+        ref_opt = [(True, False), (False, True), (True, True)]
+        pos = pos_opt[np.random.randint(0, len(pos_opt))]
+        ref = ref_opt[np.random.randint(0, len(ref_opt))]
+        color = self.get_color()
 
+        for i in range(2):
+            d = semi_path(
+                dim=self.dim,
+                pos=pos[i],
+                reflect=ref[i],
+            )
+            self.doc.append(
+                path(
+                    d=d,
+                    fill=color,
+                )
+            )
 
 def generate_tiles(
         tiles: List,
@@ -288,8 +304,9 @@ if __name__ == '__main__':
 
     generate_tiles(
         tiles=[
-            HalfCircleTile,
-            QuarterCircleTile,
-            InsetCircleTile,
+            # HalfCircleTile,
+            # QuarterCircleTile,
+            # InsetCircleTile,
+            GenericHalfCircleTile,
         ]
     )
