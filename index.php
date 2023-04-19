@@ -11,7 +11,7 @@
         <div class="tile-overlay" style="--x: 8; --y: 1; --x-pos: 1; --y-pos: 1;">
             Fraser Parlane, PhD
         </div>
-        <div class="tile-overlay" style="--x: 3; --y: 1; --x-pos: 1; --y-pos: 2;"></div>
+        <div class="tile-overlay" style="--x: 3; --y: 1; --x-pos: 1; --y-pos: 4;"></div>
 
         <?php
             $files = scandir('tiles');

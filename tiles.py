@@ -36,8 +36,7 @@ color_list = [
 
 
 def semi_path(
-        width: float,
-        height: float,
+        dim: float,
         pos: int = 0,
         reflect: bool = False,
 ) -> str:
@@ -63,10 +62,10 @@ def semi_path(
     }
 
     # Select the appropriate scalars for the path, and scale.
-    ix, iy, jx, jy = np.multiply(d[pos][reflect], [width, height, width, height])
+    ix, iy, jx, jy = np.multiply(d[pos][reflect], [dim] * 4)
 
     # Build path string
-    d = f'M {ix} {iy} A {0.5 * width} {0.5 * height} 0 0 0 {jx} {jy}'
+    d = f'M {ix} {iy} A {0.5 * dim} {0.5 * dim} 0 0 0 {jx} {jy}'
     return d
 
 
@@ -79,14 +78,12 @@ class Tile(ABC):
             self,
             colors: List[str],
             colors_random: bool = True,
-            width: int = 100,
-            height: int = 100,
+            dim: int = 100,
             animate: bool = True,
     ):
 
         # Store parameter data
-        self.width = width
-        self.height = height
+        self.dim = dim
 
         # Randomize and store the colors
         self._color_idx = -1
@@ -116,8 +113,8 @@ class Tile(ABC):
         # Make doc
         self.doc = svg(
             xmlns='http://www.w3.org/2000/svg',
-            height=str(self.height),
-            width=str(self.width),
+            height=str(self.dim),
+            width=str(self.dim),
         )
 
         # Make background
@@ -125,8 +122,8 @@ class Tile(ABC):
             rect(
                 x='0',
                 y='0',
-                width=str(self.width),
-                height=str(self.height),
+                width=str(self.dim),
+                height=str(self.dim),
                 fill=self.get_color(),
             )
         )
@@ -149,9 +146,9 @@ class HalfCircleTile(Tile):
     def build(self):
         reflect = np.random.choice([True, False])
         color = self.get_color()
-        for y in [0, self.height]:
+        for y in [0, self.dim]:
             kwargs = {
-                'cx': str(self.width / 2),
+                'cx': str(self.dim / 2),
                 'cy': str(y),
             }
             if reflect:
@@ -159,7 +156,7 @@ class HalfCircleTile(Tile):
 
             self.doc.append(
                 circle(
-                    r=str(self.height / 2),
+                    r=str(self.dim / 2),
                     fill=color,
                     **kwargs,
                 )
@@ -169,13 +166,13 @@ class HalfCircleTile(Tile):
 class QuarterCircleTile(Tile):
     def build(self):
         color = self.get_color()
-        for x in [0, self.width]:
-            for y in [0, self.height]:
+        for x in [0, self.dim]:
+            for y in [0, self.dim]:
                 self.doc.append(
                     circle(
                         cx=str(x),
                         cy=str(y),
-                        r=str(self.width / 2),
+                        r=str(self.dim / 2),
                         fill=color,
                     )
                 )
@@ -184,15 +181,22 @@ class QuarterCircleTile(Tile):
 class InsetCircleTile(Tile):
     def build(self):
         n = np.random.choice([1, 2, 2, 2])
-        for r in np.linspace(0, self.width / 2, n+1)[1:][::-1]:
+        for r in np.linspace(0, self.dim / 2, n + 1)[1:][::-1]:
             self.doc.append(
                 circle(
-                    cx=str(self.width / 2),
-                    cy=str(self.height / 2),
+                    cx=str(self.dim / 2),
+                    cy=str(self.dim / 2),
                     r=str(r),
                     fill=self.get_color(),
                 )
             )
+
+
+class GenericHalfCircleTile(Tile):
+    def build(self):
+
+        pos = np.random.choice([(0, 2), (1, 3)])
+        reflect = np.random.choice()
 
 
 def generate_tiles(
@@ -278,14 +282,14 @@ def arc_test():
 
 if __name__ == '__main__':
 
-    make_semicircle(width=100, height=100)
+    semi_path(dim=100)
 
     # arc_test()
 
-    # generate_tiles(
-    #     tiles=[
-    #         HalfCircleTile,
-    #         QuarterCircleTile,
-    #         InsetCircleTile,
-    #     ]
-    # )
+    generate_tiles(
+        tiles=[
+            HalfCircleTile,
+            QuarterCircleTile,
+            InsetCircleTile,
+        ]
+    )
