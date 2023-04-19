@@ -38,8 +38,8 @@ class Tile(ABC):
 
     def get_color(self) -> str:
         """
-        Get the next color to visualize
-        :return: color
+        Get the current color.
+        :return: color.
         """
         self._color_idx += 1
         return self.colors[self._color_idx % len(self.colors)]
@@ -90,8 +90,37 @@ class HalfCircleTile(Tile):
                 circle(
                     cx=str(self.width / 2),
                     cy=str(y),
-                    r=str(self.width / 2),
+                    r=str(self.height / 2),
                     fill=color,
+                )
+            )
+
+
+class QuarterCircleTile(Tile):
+    def build(self):
+        color = self.get_color()
+        for x in [0, self.width]:
+            for y in [0, self.height]:
+                self.doc.append(
+                    circle(
+                        cx=str(x),
+                        cy=str(y),
+                        r=str(self.width / 2),
+                        fill=color,
+                    )
+                )
+
+
+class InsetCircleTile(Tile):
+    def build(self):
+        for r in np.linspace(0, self.width / 2, 3)[1:][::-1]:
+            print(r)
+            self.doc.append(
+                circle(
+                    cx=str(self.width / 2),
+                    cy=str(self.height / 2),
+                    r=str(r),
+                    fill=self.get_color(),
                 )
             )
 
@@ -107,5 +136,5 @@ if __name__ == '__main__':
         '#ff7c43',
         '#ffa600',
     ]
-    tile = QuarterCircleTile(colors=color_list)
+    tile = InsetCircleTile(colors=color_list)
     tile.save(filepath='test.svg')
