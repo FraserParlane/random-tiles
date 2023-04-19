@@ -17,14 +17,21 @@ rect = elements.rect
 # Colors to use
 color_list = [
     '#003f5c',
-    '#2f4b7c',
+    # '#2f4b7c',
     '#665191',
-    '#a05195',
+    # '#a05195',
     '#d45087',
-    '#f95d6a',
+    # '#f95d6a',
     '#ff7c43',
-    '#ffa600',
+    # '#ffa600',
 ]
+
+# color_list = [
+#     '#f8981d',
+#     '#191717',
+#     '#d9d9d9',
+#     '#282525',
+# ]
 
 
 class Tile(ABC):
@@ -153,7 +160,7 @@ class InsetCircleTile(Tile):
 
 def generate_tiles(
         tiles: List,
-        n: int = 200,
+        n: int = 400,
         folder: str = 'tiles',
 ) -> None:
     """
