@@ -13,7 +13,7 @@ svg = elements.svg
 path = elements.path
 circle = elements.circle
 rect = elements.rect
-animate_transform = elements.animateTransform
+animate = elements.animate
 
 # Colors to use
 color_list = [
@@ -39,6 +39,7 @@ def semi_path(
         dim: float,
         pos: int = 0,
         reflect: bool = False,
+        offset: float = 0,
 ) -> str:
 
     # Define a lookup dict for the path based on the position and reflection.
@@ -63,6 +64,15 @@ def semi_path(
 
     # Select the appropriate scalars for the path, and scale.
     ix, iy, jx, jy = np.multiply(d[pos][reflect], [dim] * 4)
+
+    # If offset is not 0, move
+    if offset != 0:
+        if pos in [0, 2]:
+            ix += offset * dim
+            jx += offset * dim
+        else:
+            iy += offset * dim
+            jy += offset * dim
 
     # Build path string
     d = f'M {ix} {iy} A {0.5 * dim} {0.5 * dim} 0 0 0 {jx} {jy}'
@@ -200,20 +210,49 @@ class GenericHalfCircleTile(Tile):
         ref_opt = [(True, False), (False, True), (True, True)]
         pos = pos_opt[np.random.randint(0, len(pos_opt))]
         ref = ref_opt[np.random.randint(0, len(ref_opt))]
-        color = self.get_color()
+        color_i = self.get_color()
+        color_f = self.get_color()
+        cs = [color_i, color_f]
 
+        # For the top and bottom semicircle
         for i in range(2):
-            d = semi_path(
-                dim=self.dim,
-                pos=pos[i],
-                reflect=ref[i],
-            )
-            self.doc.append(
-                path(
-                    d=d,
-                    fill=color,
+
+            # Get the possible paths for the three positions.
+            order = np.random.choice([-1, 1])
+            d_kwargs = {
+                'dim': self.dim,
+                'pos': pos[i],
+                'reflect': ref[i],
+            }
+            d = semi_path(**d_kwargs)
+            d_neg = semi_path(**d_kwargs, offset=order)
+            d_pos = semi_path(**d_kwargs, offset=-order)
+            ds = [d_neg, d, d_pos]
+
+            # For both the hidden and final path
+            for j in range(2):
+
+                # Make path
+                p = path(
+                    d=ds[j],
+                    fill=cs[j],
                 )
-            )
+
+                # Animate
+                p.append(
+                    animate(
+                        attributeName='d',
+                        values=f'{ds[j]}; {ds[j+1]}; {ds[j]};',
+                        dur=f'3s',
+                        repeatCount='indefinite',
+                        keySplines='0.3 0 0.7 1; ' * 2,
+                        calcMode='spline',
+                    )
+                )
+
+                # Append
+                self.doc.append(p)
+
 
 def generate_tiles(
         tiles: List,
@@ -298,15 +337,16 @@ def arc_test():
 
 if __name__ == '__main__':
 
-    semi_path(dim=100)
+    # semi_path(dim=10)
 
     # arc_test()
 
     generate_tiles(
+        n=100,
         tiles=[
-            # HalfCircleTile,
-            # QuarterCircleTile,
-            # InsetCircleTile,
+            HalfCircleTile,
+            QuarterCircleTile,
+            InsetCircleTile,
             GenericHalfCircleTile,
         ]
     )

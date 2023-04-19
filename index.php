@@ -9,7 +9,6 @@
     <div class="tile-container">
         <!-- Tile overlays -->
         <div class="tile-overlay" style="--x: 8; --y: 1; --x-pos: 1; --y-pos: 1;">
-            Fraser Parlane, PhD
         </div>
         <div class="tile-overlay" style="--x: 3; --y: 1; --x-pos: 1; --y-pos: 4;"></div>
 
