@@ -7,6 +7,12 @@
 </head>
 <body>
     <div class="tile-container">
+        <!-- Tile overlays -->
+        <div class="tile-overlay" style="--x: 8; --y: 1; --x-pos: 1; --y-pos: 1;">
+            Fraser Parlane, PhD
+        </div>
+        <div class="tile-overlay" style="--x: 3; --y: 1; --x-pos: 1; --y-pos: 2;"></div>
+
         <?php
             $files = scandir('tiles');
             foreach(array_values($files) as $i => $file) {
@@ -15,7 +21,9 @@
                 }
             }
         ?>
+
     </div>
+
 
     <div class="dummy-text">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec id nulla turpis. Aliquam et convallis ipsum, et vestibulum ante. Cras elementum gravida sem ut ornare. Ut nec magna erat. Praesent sit amet neque at erat sodales viverra ut nec est. Mauris rutrum metus eu imperdiet placerat. Vivamus egestas non lacus nec consequat. Duis placerat quam nec consequat vestibulum. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Sed accumsan elit a nisl dapibus venenatis at vitae leo. Aenean egestas facilisis molestie. Aliquam tincidunt volutpat elit nec suscipit. Pellentesque accumsan augue in egestas accumsan.

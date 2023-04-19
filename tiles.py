@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
+from typing import List, Optional
 from lxml import etree, builder
-from typing import List
 from tqdm import tqdm
 import numpy as np
 import shutil
@@ -13,6 +13,7 @@ svg = elements.svg
 path = elements.path
 circle = elements.circle
 rect = elements.rect
+animate_transform = elements.animateTransform
 
 # Colors to use
 color_list = [
@@ -34,6 +35,41 @@ color_list = [
 # ]
 
 
+def semi_path(
+        width: float,
+        height: float,
+        pos: int = 0,
+        reflect: bool = False,
+) -> str:
+
+    # Define a lookup dict for the path based on the position and reflection.
+    d = {
+        0: {
+            False: (1.0, 0.5, 0.0, 0.5),
+            True:  (0.0, 0.0, 1.0, 0.0),
+        },
+        1: {
+            False: (0.5, 0.0, 0.5, 1.0),
+            True:  (0.0, 1.0, 0.0, 0.0),
+        },
+        2: {
+            False: (0.0, 0.5, 1.0, 0.5),
+            True:  (1.0, 1.0, 0.0, 1.0),
+        },
+        3: {
+            False: (0.5, 1.0, 0.5, 0.0),
+            True:  (1.0, 0.0, 1.0, 1.0),
+        }
+    }
+
+    # Select the appropriate scalars for the path, and scale.
+    ix, iy, jx, jy = np.multiply(d[pos][reflect], [width, height, width, height])
+
+    # Build path string
+    d = f'M {ix} {iy} A {0.5 * width} {0.5 * height} 0 0 0 {jx} {jy}'
+    return d
+
+
 class Tile(ABC):
     """
     Base tile class.
@@ -45,6 +81,7 @@ class Tile(ABC):
             colors_random: bool = True,
             width: int = 100,
             height: int = 100,
+            animate: bool = True,
     ):
 
         # Store parameter data
@@ -185,12 +222,70 @@ def generate_tiles(
         t.save(f'{folder}/{str(i).zfill(3)}.svg')
 
 
+def arc_test():
+
+    doc = svg(
+        xmlns='http://www.w3.org/2000/svg',
+        height='100',
+        width='100',
+    )
+
+    # Make background
+    doc.append(
+        rect(
+            x='0',
+            y='0',
+            width='100',
+            height='100',
+            fill='#FFFFFF',
+        )
+    )
+
+    # Path
+    doc.append(
+        path(
+            # pos 0, False
+            # d="M 100 50 A 50 50 0 0 0 0 50",
+
+            # pos 0, True
+            # d="M 0 0 A 50 50 0 0 0 100 0",
+
+            # Pos 1, False
+            # d="M 50 0 A 50 50 0 0 0 50 100",
+
+            # Pos 1, True
+            # d="M 0 100 A 50 50 0 0 0 0 0",
+
+            # pos 2, False
+            # d="M 0 50 A 50 50 0 0 0 100 50",
+
+            # pos 2, True
+            # d="M 100 100 A 50 50 0 0 0 0 100",
+
+            # Pos 3, False
+            # d="M 50 100 A 50 50 0 0 0 50 0",
+
+            # Pos 3, True
+            # d="M 100 0 A 50 50 0 0 0 100 100",
+
+            fill="blue",
+        )
+    )
+
+    with open('test.svg', 'wb') as f:
+        f.write(etree.tostring(doc, pretty_print=True))
+
+
 if __name__ == '__main__':
 
-    generate_tiles(
-        tiles=[
-            HalfCircleTile,
-            QuarterCircleTile,
-            InsetCircleTile,
-        ]
-    )
+    make_semicircle(width=100, height=100)
+
+    # arc_test()
+
+    # generate_tiles(
+    #     tiles=[
+    #         HalfCircleTile,
+    #         QuarterCircleTile,
+    #         InsetCircleTile,
+    #     ]
+    # )
