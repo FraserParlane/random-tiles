@@ -44,6 +44,6 @@ body {
 }
 
 :root {
-    --tile-width: 9.85vw;
+    --tile-width: 9.65vw;
     /*--tile-dim: calc((1 / 10) * (100vw - (100vw - 100%)));*/
 }

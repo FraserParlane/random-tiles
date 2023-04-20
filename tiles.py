@@ -215,13 +215,16 @@ class GenericHalfCircleTile(Tile):
         spline = '0.2 0.1 0.3 1;'
 
         # How often should the animation repeat, seconds
-        repeat = 5
+        repeat = 3
+
+        # Determine the delay for all four semicircles
+        delay = np.random.random() * 10
 
         # For the top and bottom semicircle
         for i in range(2):
 
-            # Determine the delay for all four semicircles
-            delay = np.random.random() * 10
+            #
+            semi_delay = delay + 0.2 * i * np.random.choice([-1, 1])
 
             # Get the possible paths for the three positions.
             order = np.random.choice([-1, 1])
@@ -251,6 +254,10 @@ class GenericHalfCircleTile(Tile):
                 # Animate
                 if self.anim:
 
+                    semi_id = f'id_i{i}_j{j}_{id(self)}'
+                    print(semi_id)
+
+                    # Animate first movement
                     p.append(
                         animate(
                             attributeName='d',
@@ -258,20 +265,22 @@ class GenericHalfCircleTile(Tile):
                             dur=f'2s',
                             keySplines=spline,
                             calcMode='spline',
-                            id=f'id{id(self)}i',
-                            begin=f"{delay}s;id{id(self)}f.end+{repeat}s",
+                            id=f'{semi_id}i',
+                            begin=f"{semi_delay}s;{semi_id}f.end+{repeat}s",
                             fill='freeze',
                         )
                     )
+
+                    # Animate return
                     p.append(
                         animate(
                             attributeName='d',
-                            values=f'{ds[j + 1]}; {ds[j]};',
+                            values=f'{ds[j+1]}; {ds[j]};',
                             dur=f'2s',
                             keySplines=spline,
                             calcMode='spline',
-                            id=f'id{id(self)}f',
-                            begin=f"id{id(self)}i.end+{repeat}s",
+                            id=f'{semi_id}f',
+                            begin=f"{semi_id}i.end+{repeat}s",
                             fill='freeze',
                         )
                     )
