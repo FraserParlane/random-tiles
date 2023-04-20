@@ -23,12 +23,21 @@ body {
     color: darkgrey;
 }
 
+.overlay-container {
+    position: absolute;
+    width: 100%;
+    aspect-ratio: 2;
+    /*background-color: red;*/
+    /*border-radius: 5% / 10%;*/
+    /*opacity: 50%;*/
+}
+
 .tile-overlay {
     position: absolute;
     left: calc(var(--x-pos) * var(--tile-width));
-    top: calc(var(--y-pos) * var(--tile-width));
+    top: calc(var(--y-pos) * 20%);
     width: calc(var(--x) * var(--tile-width));
-    height: calc(var(--y) * var(--tile-width));
+    aspect-ratio: calc(var(--x) / var(--y));
     background-color: #222222;
     z-index: 2;
     color: #f7aa58;
@@ -40,10 +49,12 @@ body {
     font-family: 'Roboto Mono', monospace;
     font-weight: 300;
     text-align: center;
-    border-radius: calc(var(--tile-width) / 2);
+    /*border-radius: calc(var(--tile-width) / 2);*/
+    border-radius: calc(50% / var(--x)) / calc(50% / var(--y));
+
 }
 
 :root {
-    --tile-width: 9.65vw;
+    --tile-width: 10%;
     /*--tile-dim: calc((1 / 10) * (100vw - (100vw - 100%)));*/
 }

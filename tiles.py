@@ -316,65 +316,11 @@ def generate_tiles(
         t.save(f'{folder}/{str(i).zfill(3)}.svg')
 
 
-def arc_test():
-
-    doc = svg(
-        xmlns='http://www.w3.org/2000/svg',
-        height='100',
-        width='100',
-    )
-
-    # Make background
-    doc.append(
-        rect(
-            x='0',
-            y='0',
-            width='100',
-            height='100',
-            fill='#FFFFFF',
-        )
-    )
-
-    # Path
-    doc.append(
-        path(
-            # pos 0, False
-            # d="M 100 50 A 50 50 0 0 0 0 50",
-
-            # pos 0, True
-            # d="M 0 0 A 50 50 0 0 0 100 0",
-
-            # Pos 1, False
-            # d="M 50 0 A 50 50 0 0 0 50 100",
-
-            # Pos 1, True
-            # d="M 0 100 A 50 50 0 0 0 0 0",
-
-            # pos 2, False
-            # d="M 0 50 A 50 50 0 0 0 100 50",
-
-            # pos 2, True
-            # d="M 100 100 A 50 50 0 0 0 0 100",
-
-            # Pos 3, False
-            # d="M 50 100 A 50 50 0 0 0 50 0",
-
-            # Pos 3, True
-            # d="M 100 0 A 50 50 0 0 0 100 100",
-
-            fill="blue",
-        )
-    )
-
     with open('test.svg', 'wb') as f:
         f.write(etree.tostring(doc, pretty_print=True))
 
 
 if __name__ == '__main__':
-
-    # semi_path(dim=10)
-
-    # arc_test()
 
     generate_tiles(
         n=100,
