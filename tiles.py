@@ -3,9 +3,9 @@ from typing import List, Optional
 from lxml import etree, builder
 from tqdm import tqdm
 import numpy as np
+from met_brewer import met_brew
 import shutil
 import os
-
 
 # Initialize some SVG objects
 elements = builder.ElementMaker()
@@ -15,24 +15,9 @@ circle = elements.circle
 rect = elements.rect
 animate = elements.animate
 
-# Colors to use
-color_list = [
-    # '#003f5c',
-    '#2f4b7c',
-    '#665191',
-    '#a05195',
-    '#d45087',
-    # '#f95d6a',
-    # '#ff7c43',
-    # '#ffa600',
-]
 
-# color_list = [
-#     '#f8981d',
-#     '#191717',
-#     '#d9d9d9',
-#     '#282525',
-# ]
+# color_list = met_brew(name='Signac')
+color_list = met_brew(name='Hiroshige')
 
 
 def semi_path(
@@ -214,6 +199,7 @@ class GenericHalfCircleTile(Tile):
         color_i = self.get_color()
         color_f = self.get_color()
         cs = [color_i, color_f]
+        spline = '0.2 0.1 0.3 1;'
 
         # For the top and bottom semicircle
         for i in range(2):
@@ -241,15 +227,29 @@ class GenericHalfCircleTile(Tile):
 
                 # Animate
                 if self.anim:
+                    delay = np.random.random() * 20
+                    repeat = 5
                     p.append(
                         animate(
                             attributeName='d',
-                            values=f'{ds[j]}; {ds[j+1]}; {ds[j]};',
-                            dur=f'3s',
-                            keySplines='0.3 0 0.7 1; ' * 2,
+                            values=f'{ds[j]}; {ds[j+1]};',
+                            dur=f'2s',
+                            keySplines=spline,
                             calcMode='spline',
                             id=f'id{id(self)}i',
-                            begin=f"1s;id{id(self)}i.end+10s",
+                            begin=f"{delay}s;id{id(self)}f.end+{repeat}s",
+                            fill='freeze',
+                        )
+                    )
+                    p.append(
+                        animate(
+                            attributeName='d',
+                            values=f'{ds[j + 1]}; {ds[j]};',
+                            dur=f'2s',
+                            keySplines=spline,
+                            calcMode='spline',
+                            id=f'id{id(self)}f',
+                            begin=f"id{id(self)}i.end+{repeat}s",
                             fill='freeze',
                         )
                     )
@@ -348,7 +348,6 @@ if __name__ == '__main__':
     generate_tiles(
         n=100,
         tiles=[
-            # HalfCircleTile,
             QuarterCircleTile,
             InsetCircleTile,
             GenericHalfCircleTile,

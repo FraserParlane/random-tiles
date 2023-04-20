@@ -4,13 +4,19 @@
     <meta charset="UTF-8">
     <title>Tiles</title>
     <link rel="stylesheet" href="main.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@200;400&family=Source+Sans+Pro:wght@300;400&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="tile-container">
         <!-- Tile overlays -->
-        <div class="tile-overlay" style="--x: 8; --y: 1; --x-pos: 1; --y-pos: 1;">
-        </div>
-        <div class="tile-overlay" style="--x: 3; --y: 1; --x-pos: 1; --y-pos: 4;"></div>
+<!--        <div class="tile-overlay" style="--x: 6; --y: 1; --x-pos: 1; --y-pos: 1;"></div>-->
+<!--        <div class="tile-overlay" style="--x: 3; --y: 1; --x-pos: 1; --y-pos: 4;"></div>-->
+
+        <div class="tile-overlay" style="--x: 8; --y: 1; --x-pos: 1; --y-pos: 1;"></div>
+        <div class="tile-overlay" style="--x: 3; --y: 1; --x-pos: 1; --y-pos: 3;"></div>
+        <div class="tile-overlay" style="--x: 1; --y: 1; --x-pos: 8; --y-pos: 4;"></div>
 
         <?php
             $files = scandir('tiles');
