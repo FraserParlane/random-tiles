@@ -30,7 +30,7 @@ body {
     top: calc(var(--y-pos) * var(--tile-width));
     width: calc(var(--x) * var(--tile-width));
     height: calc(var(--y) * var(--tile-width));
-    background-color: #003f5c;
+    background-color: #2f4b7c;
     z-index: 2;
     color: #EEEEEE;
     vertical-align: middle;

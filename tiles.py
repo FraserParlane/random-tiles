@@ -17,13 +17,13 @@ animate = elements.animate
 
 # Colors to use
 color_list = [
-    '#003f5c',
-    # '#2f4b7c',
+    # '#003f5c',
+    '#2f4b7c',
     '#665191',
-    # '#a05195',
+    '#a05195',
     '#d45087',
     # '#f95d6a',
-    '#ff7c43',
+    # '#ff7c43',
     # '#ffa600',
 ]
 
@@ -89,11 +89,12 @@ class Tile(ABC):
             colors: List[str],
             colors_random: bool = True,
             dim: int = 100,
-            animate: bool = True,
+            anim: bool = True,
     ):
 
         # Store parameter data
         self.dim = dim
+        self.anim = anim
 
         # Randomize and store the colors
         self._color_idx = -1
@@ -239,16 +240,19 @@ class GenericHalfCircleTile(Tile):
                 )
 
                 # Animate
-                p.append(
-                    animate(
-                        attributeName='d',
-                        values=f'{ds[j]}; {ds[j+1]}; {ds[j]};',
-                        dur=f'3s',
-                        repeatCount='indefinite',
-                        keySplines='0.3 0 0.7 1; ' * 2,
-                        calcMode='spline',
+                if self.anim:
+                    p.append(
+                        animate(
+                            attributeName='d',
+                            values=f'{ds[j]}; {ds[j+1]}; {ds[j]};',
+                            dur=f'3s',
+                            keySplines='0.3 0 0.7 1; ' * 2,
+                            calcMode='spline',
+                            id=f'id{id(self)}i',
+                            begin=f"1s;id{id(self)}i.end+10s",
+                            fill='freeze',
+                        )
                     )
-                )
 
                 # Append
                 self.doc.append(p)
@@ -277,7 +281,7 @@ def generate_tiles(
 
         # Get a random tile class
         tile_class = np.random.choice(tiles)
-        t: Tile = tile_class(colors=color_list)
+        t: Tile = tile_class(colors=color_list, anim=True)
         t.save(f'{folder}/{str(i).zfill(3)}.svg')
 
 
@@ -344,7 +348,7 @@ if __name__ == '__main__':
     generate_tiles(
         n=100,
         tiles=[
-            HalfCircleTile,
+            # HalfCircleTile,
             QuarterCircleTile,
             InsetCircleTile,
             GenericHalfCircleTile,
