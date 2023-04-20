@@ -191,32 +191,55 @@ class InsetCircleTile(Tile):
 class GenericHalfCircleTile(Tile):
     def build(self):
 
-        # Randomly determine position, reflections
+        # Randomly determine position of the two semicircles. Position 0 is at
+        # the top, and are numbered counterclockwise. (Position 3 is right side.)
         pos_opt = [(0, 2), (1, 3)]
+
+        # How should the semicircles be reflected. Unreflected is a section of
+        # a circle, and reflected has the flat edge of the semicircle touching
+        # the bounding box. Note that both semicircles being unreflected is not
+        # an option as that is a circle.
         ref_opt = [(True, False), (False, True), (True, True)]
+
+        # Randomly choose options.
         pos = pos_opt[np.random.randint(0, len(pos_opt))]
         ref = ref_opt[np.random.randint(0, len(ref_opt))]
+
+        # Get colors for the initial (i) semicircles and the new (f)
+        # semicircles.
         color_i = self.get_color()
         color_f = self.get_color()
         cs = [color_i, color_f]
+
+        # The animation spline.
         spline = '0.2 0.1 0.3 1;'
+
+        # How often should the animation repeat, seconds
+        repeat = 5
 
         # For the top and bottom semicircle
         for i in range(2):
 
+            # Determine the delay for all four semicircles
+            delay = np.random.random() * 10
+
             # Get the possible paths for the three positions.
             order = np.random.choice([-1, 1])
+
+            # Generate the generic path kwargs
             d_kwargs = {
                 'dim': self.dim,
                 'pos': pos[i],
                 'reflect': ref[i],
             }
+
+            # Generate the three path positions
             d = semi_path(**d_kwargs)
             d_neg = semi_path(**d_kwargs, offset=order)
             d_pos = semi_path(**d_kwargs, offset=-order)
             ds = [d_neg, d, d_pos]
 
-            # For both the hidden and final path
+            # For both the hidden, shown semicircle
             for j in range(2):
 
                 # Make path
@@ -227,8 +250,7 @@ class GenericHalfCircleTile(Tile):
 
                 # Animate
                 if self.anim:
-                    delay = np.random.random() * 20
-                    repeat = 5
+
                     p.append(
                         animate(
                             attributeName='d',

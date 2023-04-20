@@ -16,7 +16,7 @@
 
         <div class="tile-overlay" style="--x: 8; --y: 1; --x-pos: 1; --y-pos: 1;"></div>
         <div class="tile-overlay" style="--x: 3; --y: 1; --x-pos: 1; --y-pos: 3;"></div>
-        <div class="tile-overlay" style="--x: 1; --y: 1; --x-pos: 8; --y-pos: 4;"></div>
+        <div class="tile-overlay" style="--x: 1; --y: 1; --x-pos: 8; --y-pos: 3;"></div>
 
         <?php
             $files = scandir('tiles');
